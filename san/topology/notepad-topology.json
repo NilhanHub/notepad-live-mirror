@@ -1,0 +1,198 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "sanBlueprintEdition": "3.7",
+  "graphKind": "hybrid",
+  "authoritative": true,
+  "agentOrientation": {
+    "canonicalDoctrineSurface": "AGENTS.md",
+    "canonicalControlPlaneSurface": "san/control-plane.md",
+    "canonicalDurableStateSurface": "san/state/durable-state.md",
+    "canonicalPreflightSurface": "san/preflight.md",
+    "canonicalSanlockSurface": "san/sanlock.md",
+    "defaultExecutionEntrypoints": [
+      "run-local.cmd",
+      "scripts/dev.ps1"
+    ],
+    "defaultVerificationEntrypoints": [
+      "npm test",
+      "npm run verify:headless",
+      "npm run inspect:notepad",
+      "npm run smoke:live",
+      "npm run audit:real"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "san-harness",
+      "label": "SAN harness",
+      "role": "governance",
+      "pathHints": ["AGENTS.md", "README.md", "san/"],
+      "effectiveLoadPercent": 4.5
+    },
+    {
+      "id": "frontend-shell",
+      "label": "Frontend shell",
+      "role": "ui",
+      "pathHints": ["frontend/src/App.tsx", "frontend/src/styles.css"],
+      "effectiveLoadPercent": 4.8
+    },
+    {
+      "id": "tab-list",
+      "label": "Tab list",
+      "role": "ui",
+      "parentId": "frontend-shell",
+      "pathHints": ["frontend/src/App.tsx"],
+      "effectiveLoadPercent": 3.2
+    },
+    {
+      "id": "editor-surface",
+      "label": "Editor surface",
+      "role": "ui",
+      "parentId": "frontend-shell",
+      "pathHints": ["frontend/src/App.tsx", "frontend/src/styles.css"],
+      "effectiveLoadPercent": 4.3
+    },
+    {
+      "id": "search-index",
+      "label": "Search index",
+      "role": "logic",
+      "pathHints": ["backend/src/search.ts"],
+      "effectiveLoadPercent": 3.3
+    },
+    {
+      "id": "query-engine",
+      "label": "Query engine",
+      "role": "logic",
+      "pathHints": ["backend/src/search.ts", "frontend/src/App.tsx"],
+      "effectiveLoadPercent": 3.4
+    },
+    {
+      "id": "local-api",
+      "label": "Local API",
+      "role": "service",
+      "pathHints": ["backend/src/server.ts", "backend/src/notepadService.ts"],
+      "effectiveLoadPercent": 4.9
+    },
+    {
+      "id": "nonvisual-bridge",
+      "label": "Non-visual bridge",
+      "role": "automation",
+      "pathHints": ["bridge/NotepadBridge.ps1", "backend/src/bridge.ts"],
+      "effectiveLoadPercent": 4.8
+    },
+    {
+      "id": "session-state-parser",
+      "label": "Session-state parser",
+      "role": "logic",
+      "pathHints": ["backend/src/sessionState.ts"],
+      "effectiveLoadPercent": 4.7
+    },
+    {
+      "id": "tab-identity-mapper",
+      "label": "Tab identity mapper",
+      "role": "logic",
+      "pathHints": ["backend/src/notepadService.ts", "backend/src/text.ts"],
+      "effectiveLoadPercent": 3.9
+    },
+    {
+      "id": "notepad-writeback",
+      "label": "Notepad write-back",
+      "role": "automation",
+      "pathHints": ["bridge/NotepadBridge.ps1", "backend/src/notepadService.ts"],
+      "effectiveLoadPercent": 4.8
+    },
+    {
+      "id": "conflict-detection",
+      "label": "Conflict detection",
+      "role": "logic",
+      "pathHints": ["backend/src/notepadService.ts", "frontend/src/App.tsx"],
+      "effectiveLoadPercent": 3.8
+    },
+    {
+      "id": "diagnostics-surface",
+      "label": "Diagnostics surface",
+      "role": "observability",
+      "pathHints": ["backend/src/runtime.ts", "frontend/src/App.tsx"],
+      "effectiveLoadPercent": 3.9
+    },
+    {
+      "id": "oracle-surface",
+      "label": "Oracle surface",
+      "role": "docs",
+      "pathHints": ["backend/src/diagnostics/oracleManifest.ts", "docs/for-oracle-to-read.md", "docs/for-oracle-to-read.yaml", "frontend/src/App.tsx"],
+      "effectiveLoadPercent": 3.2
+    },
+    {
+      "id": "desktop-shortcut",
+      "label": "Desktop shortcut",
+      "role": "ops",
+      "pathHints": ["scripts/create-desktop-shortcut.ps1"],
+      "effectiveLoadPercent": 2.4
+    },
+    {
+      "id": "evidence-bundler",
+      "label": "Evidence bundler",
+      "role": "observability",
+      "pathHints": ["backend/src/runtime.ts", "artifacts/latest/"],
+      "effectiveLoadPercent": 3.7
+    },
+    {
+      "id": "headless-verification",
+      "label": "Headless verification",
+      "role": "verification",
+      "pathHints": ["playwright.config.ts", "tests/headless/app.spec.ts"],
+      "effectiveLoadPercent": 3.5
+    },
+    {
+      "id": "real-user-verification",
+      "label": "Real-user verification",
+      "role": "verification",
+      "pathHints": ["scripts/smoke-live.ps1", "backend/src/cli/realUserSmoke.ts"],
+      "effectiveLoadPercent": 3.4
+    },
+    {
+      "id": "real-user-audit",
+      "label": "Real-user audit",
+      "role": "verification",
+      "pathHints": ["backend/src/cli/realUserAudit.ts"],
+      "effectiveLoadPercent": 3.2
+    },
+    {
+      "id": "skills-discovery",
+      "label": "Skills discovery",
+      "role": "governance",
+      "pathHints": ["artifacts/skills/d-drive-skills-inventory.json", "san/verification/skills-scan-2026-04-13.md"],
+      "effectiveLoadPercent": 2.1
+    }
+  ],
+  "edges": [
+    { "from": "frontend-shell", "to": "local-api", "type": "declaredDependency" },
+    { "from": "frontend-shell", "to": "diagnostics-surface", "type": "declaredDependency" },
+    { "from": "tab-list", "to": "session-state-parser", "type": "declaredDependency" },
+    { "from": "tab-list", "to": "tab-identity-mapper", "type": "declaredDependency" },
+    { "from": "editor-surface", "to": "conflict-detection", "type": "declaredDependency" },
+    { "from": "editor-surface", "to": "notepad-writeback", "type": "declaredDependency" },
+    { "from": "search-index", "to": "session-state-parser", "type": "declaredDependency" },
+    { "from": "query-engine", "to": "search-index", "type": "declaredDependency" },
+    { "from": "local-api", "to": "nonvisual-bridge", "type": "declaredDependency" },
+    { "from": "local-api", "to": "session-state-parser", "type": "declaredDependency" },
+    { "from": "local-api", "to": "tab-identity-mapper", "type": "declaredDependency" },
+    { "from": "local-api", "to": "notepad-writeback", "type": "declaredDependency" },
+    { "from": "local-api", "to": "diagnostics-surface", "type": "declaredDependency" },
+    { "from": "local-api", "to": "evidence-bundler", "type": "declaredDependency" },
+    { "from": "notepad-writeback", "to": "conflict-detection", "type": "declaredDependency" },
+    { "from": "diagnostics-surface", "to": "oracle-surface", "type": "declaredDependency" },
+    { "from": "desktop-shortcut", "to": "frontend-shell", "type": "declaredDependency" },
+    { "from": "headless-verification", "to": "frontend-shell", "type": "declaredDependency" },
+    { "from": "real-user-verification", "to": "session-state-parser", "type": "declaredDependency" },
+    { "from": "real-user-verification", "to": "nonvisual-bridge", "type": "declaredDependency" },
+    { "from": "real-user-audit", "to": "session-state-parser", "type": "declaredDependency" },
+    { "from": "san-harness", "to": "skills-discovery", "type": "declaredDependency" }
+  ],
+  "integrity": {
+    "declaredObservedDriftScore": 1,
+    "cyclesPresent": false,
+    "lastTopologyReview": "2026-04-13",
+    "lastSanlockReview": "2026-04-13"
+  }
+}

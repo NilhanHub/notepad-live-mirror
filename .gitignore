@@ -1,0 +1,16 @@
+node_modules/
+frontend/dist/
+backend/dist/
+dist/
+coverage/
+artifacts/
+playwright-report/
+test-results/
+*.log
+server.out.log
+server.err.log
+.DS_Store
+.notepad-smoke/
+.env
+.env.*
+!.env.example
